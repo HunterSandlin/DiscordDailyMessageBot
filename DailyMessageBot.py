@@ -13,5 +13,5 @@ async def on_message(message):
 
 
 #run bot, string is the bot token from discord developer website    
-client.run('NzE1NjY5NjQ0NzMxNDgyMTIz.XtAmlA.3N-V6wA3Dg12iCKiyiz28gXrPG4')
+client.run('DISCORD_BOT_TOKEN')
 
