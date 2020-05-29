@@ -1,12 +1,12 @@
 import discord
 from discord.ext import commands
-TOKEN = 'COPY_TOKEN_HERE'
+TOKEN = 'NzE1NjY5NjQ0NzMxNDgyMTIz.XtA6nA.crF07v8LWBcz6kJ-gOCjUfYPbVM'
 
 #connect to discord 
 client = discord.Client()
 #set command prefix
 client = commands.Bot(command_prefix='dmb ')
-
+#users that will receive messages
 users = []
 
 #--------Handles Events---------
@@ -29,6 +29,9 @@ async def echo(ctx, *args):
 
 @client.command()
 async def addUser(ctx, *newUsers):
+    if len(newUsers) == 0:
+        await discord.abc.Messageable.send(ctx, "--Error: no users selects.")
+        return
     for user in newUsers:
         #remove extra parts of id, comes as <@!555>
         user = user.replace("<@!","")
@@ -36,7 +39,20 @@ async def addUser(ctx, *newUsers):
         #get the user from the server and add to users array
         user = ctx.message.guild.get_member(int(user))
         users.append(user)
-    await discord.abc.Messageable.send(ctx, "Users added.")
+    reply = "--User added." if len(newUsers) == 1 else "--Users added."
+    await discord.abc.Messageable.send(ctx, reply)
+
+@client.command()
+async def testMessage(message):
+    for user in users:
+        await user.create_dm()
+        await user.dm_channel.send("This is a test, please disregard")
+
+async def sendDM(message):
+    for user in users:
+        await user.create_dm()
+        await user.dm_channel.send(message)
+
 
 #run bot using token    
 client.run(TOKEN)
