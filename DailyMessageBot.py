@@ -1,7 +1,10 @@
 import discord
 from discord.ext import commands
-TOKEN = 'YOUR_TOKEN_HERE'
+import yaml
 
+with open('config.yaml', 'r') as file:
+    configFile = yaml.safe_load(file)
+TOKEN = configFile['token']
 #connect to discord 
 client = discord.Client()
 #set command prefix
