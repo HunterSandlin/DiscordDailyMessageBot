@@ -53,6 +53,19 @@ async def testMessage(message):
         await user.create_dm()
         await user.dm_channel.send("This is a test, please disregard")
 
+#sends each task in a list
+@client.command()
+async def viewTasks(ctx):
+    allTasks = ''
+    #each list of items (each 'items' is an int from config)
+    for items in tasks:
+        allTasks += str(items) + '\n'
+        #access each item in the array associated with that int
+        for eachOptions in tasks[items]:
+            # add each option to string
+            allTasks += '\t' + eachOptions + '\n'
+    await discord.abc.Messageable.send(ctx, allTasks)
+
 #sends 2 random tasts
 @client.command()
 async def sendTasks(ctx):
@@ -66,13 +79,20 @@ async def sendTasks(ctx):
 #randomly selects 'numTasks' number of tasks from yaml file, weighted
 async def getRandomTasks(numTasks):
     hat = []
+    #each list of items (each 'items' is an int from config)
     for items in tasks:
+        #access each item in the array associated with that int
         for eachOptions in tasks[items]:
+            # add it to hat[] x = that int times
             for _ in range(items):
                 hat.append(eachOptions)
     #randomly get distinct values from hat, numTasks is how many
-    #TODO not returning unique sample, force to be unique
-    return random.sample(hat, int(numTasks))
+    picks = []
+    while (len(picks) < numTasks):
+        ranChoice = random.choice(hat)
+        if ranChoice not in picks:
+            picks.append(ranChoice)
+    return picks
 
 
 #run bot using token    
