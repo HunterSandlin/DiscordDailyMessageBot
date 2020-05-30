@@ -25,19 +25,22 @@ async def on_ready():
 #---------Handles Commands---------
 @client.command()
 async def ping(ctx):
-    await discord.abc.Messageable.send(ctx, "pong")
+    embed = discord.Embed(description = "pong")
+    await ctx.send(embed = embed)
 
 @client.command()
 async def echo(ctx, *args):
     output = ''
     for word in args:
         output += word + ' '
-    await discord.abc.Messageable.send(ctx, output)
+    embed = discord.Embed(description = output)
+    await ctx.send(embed = embed)
 
 @client.command()
 async def addUser(ctx, *newUsers):
     if len(newUsers) == 0:
-        await discord.abc.Messageable.send(ctx, "--Error: no users selects.")
+        embed = discord.Embed(description = " -- Error: no users selects.")
+        await ctx.send(embed = embed)
         return
     for user in newUsers:
         #remove extra parts of id, comes as <@!555>
@@ -46,43 +49,76 @@ async def addUser(ctx, *newUsers):
         #get the user from the server and add to users array
         user = ctx.message.guild.get_member(int(user))
         users.append(user)
-    reply = "--User added." if len(newUsers) == 1 else "--Users added."
-    await discord.abc.Messageable.send(ctx, reply)
+    reply = " -- User added." if len(newUsers) == 1 else " -- Users added."
+    embed = discord.Embed(description = reply)
+    await ctx.send(embed = embed)
 
 @client.command()
 async def testTasks(ctx):
     #if there are no users you cannot send tasks
     if len(users) == 0:
-        await discord.abc.Messageable.send(ctx, "--There are no users added.")
+        embed = discord.Embed(description = " -- There are no users added.")
+        await ctx.send(embed = embed)
         return
     await dmTasks(ctx)
-    await discord.abc.Messageable.send(ctx, "--DM's sent")
+    embed = discord.Embed(description = " -- DM's sent.")
+    await ctx.send(embed = embed)
+
 
 #sends each task in a list
 @client.command()
 async def viewTasks(ctx):
-    allTasks = ''
+    embed = discord.Embed(title = "All tasks")
     #each list of items (each 'items' is an int from config)
     for items in tasks:
-        allTasks += str(items) + '\n'
+        allTasks = ''
         #access each item in the array associated with that int
         for eachOptions in tasks[items]:
             # add each option to string
             allTasks += '\t' + eachOptions + '\n'
-    await discord.abc.Messageable.send(ctx, allTasks)
-
-#sends 2 random tasts
+        embed.add_field(name=str(items), value=allTasks, inline=False)
+    await ctx.send(embed = embed)
+    
+    
 @client.command()
-async def sendTasks(ctx):
-    newTasks = await getRandomTasks()
-    for items in newTasks:
-        await discord.abc.Messageable.send(ctx, items)
+async def setNumTasks(ctx, num):
+    global numTasks
+    numTasks = int(num)
+    embed = discord.Embed(description = " -- " +str(num) + " tasks will be send instead now.")
+    await ctx.send(embed = embed)
 
-#TODO: add user
-#TODO: remove user
+@client.command()
+async def getUsers(ctx):
+    allUsers = ''
+    if len(users) == 0:
+        embed = discord.Embed(description = " -- There are currently no users.")
+        await ctx.send(embed = embed)
+        return
+    for user in users:
+        #remove extra parts of id, comes as <@!555>
+        allUsers += str(user) + "\n"
+    embed = discord.Embed(description = allUsers)
+    await ctx.send(embed = embed)
+
+@client.command()
+async def removeUser(ctx, *removeUsers):
+    if len(removeUsers) == 0:
+        embed = discord.Embed(description = " -- Error: no users selects.")
+        await ctx.send(embed = embed)
+        return
+    for user in removeUsers:
+        #remove extra parts of id, comes as <@!555>
+        user = user.replace("<@!","")
+        user = user.replace(">","")
+        #get the user from the server and remove from users array
+        user = ctx.message.guild.get_member(int(user))
+        users.remove(user)
+    reply = " -- User removed." if len(removeUsers) == 1 else " -- Users removed."
+    embed = discord.Embed(description = reply)
+    await ctx.send(embed = embed)
+
 #TODO: add task
 #TODO: remove task
-#TODO: update tasks per day
 #TODO: update send time
 #TODO: make help command
 
@@ -124,8 +160,6 @@ async def dmTasks(ctx):
         await user.create_dm()
         await user.dm_channel.send(embed=embed)
    
-
-
 #methods for getting suffix in date, ex "May 10th"
 #decides what suffix to use
 async def suffix(d):
