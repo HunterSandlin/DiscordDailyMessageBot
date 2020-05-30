@@ -1,10 +1,12 @@
 import discord
 from discord.ext import commands
 import yaml
+import random
 
 with open('config.yaml', 'r') as file:
     configFile = yaml.safe_load(file)
 TOKEN = configFile['token']
+tasks = configFile['tasks']
 #connect to discord 
 client = discord.Client()
 #set command prefix
@@ -51,10 +53,26 @@ async def testMessage(message):
         await user.create_dm()
         await user.dm_channel.send("This is a test, please disregard")
 
-async def sendDM(message):
-    for user in users:
-        await user.create_dm()
-        await user.dm_channel.send(message)
+#sends 2 random tasts
+@client.command()
+async def sendTasks(ctx):
+    newTasks = await getRandomTasks(2)
+    for items in newTasks:
+        await discord.abc.Messageable.send(ctx, items)
+
+
+
+#---------General Functions---------
+#randomly selects 'numTasks' number of tasks from yaml file, weighted
+async def getRandomTasks(numTasks):
+    hat = []
+    for items in tasks:
+        for eachOptions in tasks[items]:
+            for _ in range(items):
+                hat.append(eachOptions)
+    #randomly get distinct values from hat, numTasks is how many
+    #TODO not returning unique sample, force to be unique
+    return random.sample(hat, int(numTasks))
 
 
 #run bot using token    
