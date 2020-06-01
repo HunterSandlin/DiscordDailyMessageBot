@@ -74,11 +74,12 @@ async def viewTasks(ctx):
     #each list of items (each 'items' is an int from config)
     for items in tasks:
         allTasks = ''
-        #access each item in the array associated with that int
-        for eachOptions in tasks[items]:
-            # add each option to string
-            allTasks += '\t' + eachOptions + '\n'
-        embed.add_field(name=str(items), value=allTasks, inline=False)
+        #access each item in the array associated with that int if there are any there
+        if len(tasks[items]) > 0:
+            for eachOptions in tasks[items]:
+                # add each option to string if they exist
+                allTasks += '\t' + eachOptions + '\n'
+            embed.add_field(name=str(items), value=allTasks, inline=False)
     await ctx.send(embed = embed)
     
     
@@ -139,11 +140,25 @@ async def addTask(ctx, weight, newTask):
     embed = discord.Embed(description = "-- Task added.")
     await ctx.send(embed = embed)
 
+@client.command()
+async def removeTask(ctx, removeTask):
+    #validate input
+    if (type(removeTask) != str):
+        embed = discord.Embed(description = 'Error: second value must be an string (ex. "Read book").')
+        await ctx.send(embed = embed)
+        return
+    global tasks
+    for weight in tasks:
+        if removeTask in tasks[weight]:
+            tasks[weight].remove(removeTask)
+            embed = discord.Embed(description = '-- Removed item from ' + str(weight) + ' weight class.')
+            await ctx.send(embed = embed)
+            return
+    embed = discord.Embed(description = 'Error: task does not exists')
+    await ctx.send(embed = embed)
 
-
-#TODO: remove task
 #TODO: update send time
-#TODO: make help command
+
 
 #---------General Functions---------
 #randomly selects 'numTasks' number of tasks from yaml file, weighted
