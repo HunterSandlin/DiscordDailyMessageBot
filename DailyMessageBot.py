@@ -3,6 +3,7 @@ from discord.ext import commands
 import yaml
 import random
 from datetime import datetime as dt
+from discord.ext import tasks as discordTasks
 
 with open('config.yaml', 'r') as file:
     configFile = yaml.safe_load(file)
@@ -16,10 +17,11 @@ client = commands.Bot(command_prefix='dmb ')
 users = []
 numTasks = 2
 
+
 #--------Handles Events---------
 @client.event
 async def on_ready():
-    print("Bot is ready.")
+    print("Bot is ready.")    
 
 
 #---------Handles Commands---------
@@ -60,7 +62,7 @@ async def testTasks(ctx):
         embed = discord.Embed(description = " -- There are no users added.")
         await ctx.send(embed = embed)
         return
-    await dmTasks(ctx)
+    await dmTasks()
     embed = discord.Embed(description = " -- DM's sent.")
     await ctx.send(embed = embed)
 
@@ -117,7 +119,28 @@ async def removeUser(ctx, *removeUsers):
     embed = discord.Embed(description = reply)
     await ctx.send(embed = embed)
 
-#TODO: add task
+@client.command()
+async def addTask(ctx, weight, newTask):
+    #validate input
+    if not weight.isnumeric:
+        embed = discord.Embed(description = "Error: first value must be an integer (qutations are not allowed)")
+        await ctx.send(embed = embed)
+        return
+    if (type(newTask) != str):
+        embed = discord.Embed(description = 'Error: second value must be an string (ex. "Read book").')
+        await ctx.send(embed = embed)
+        return
+    #see if the weight exists then add accordingly
+    global tasks
+    if int(weight) in tasks:
+        tasks[int(weight)].append(newTask)
+    else:
+        tasks[int(weight)] = [newTask]
+    embed = discord.Embed(description = "-- Task added.")
+    await ctx.send(embed = embed)
+
+
+
 #TODO: remove task
 #TODO: update send time
 #TODO: make help command
@@ -141,7 +164,7 @@ async def getRandomTasks():
             picks.append(ranChoice)
     return picks
 
-async def dmTasks(ctx):
+async def dmTasks():
     todaysTasks = await getRandomTasks()
     todaysDate = await custom_strftime('%A, %B {S}.', dt.now())
     todaysMessage = "\n\nGoodmorning! Today is " + todaysDate + "\n" + "Here are your tasks for today!\n"
@@ -169,7 +192,13 @@ async def suffix(d):
 async def custom_strftime(format, t):
     return t.strftime(format).replace('{S}', str(t.day) + await suffix(t.day))
 
+#loop for sending message
+@discordTasks.loop(minutes=1.0)
+async def messageDaily():
+    if (dt.now().hour == 14) and (dt.now().strftime('%M') == '49'):
+        await dmTasks()
 
+
+messageDaily.start()
 #run bot using token    
 client.run(TOKEN)
-
