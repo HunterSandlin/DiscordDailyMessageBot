@@ -91,10 +91,30 @@ You can use these commands to talk to the bot on it's server. All commands are p
 
   ex. ```dmb viewTasks``` 
   
-  **addTask** ------- takes an integer (the weight of task) and a stirng in quotations; adds task in memory along under their weight.
+  **addTask** ------- takes an integer (the weight of task) and a string in quotes; adds task in memory along under their weight.
 
   ex. ```dmb addTask 5 "Read chapter of book"``` 
   
-  **removeTask** ------- takes a stirng in quotations; removes that task from memory. Must be exact, it is reccomended to copy it from the viewTasks commad.
+  **removeTask** ------- takes a stirng in quotes; removes that task from memory. Must be exact, it is reccomended to copy it from the viewTasks commad.
 
   ex. ```dmb removeTask "Read chapter of book"``` 
+
+  **setMessageTime** ------- takes a time in 24 hour format; sets that time to be when messages will be sent each day.
+
+  ex. ```dmb setMessageTime 23:15``` 
+
+   **viewMessageTime** ------- takes no arguments; returns time that messages will be set each day.
+
+  ex. ```dmb viewMessageTime``` 
+
+**blockDays** ------- takes strings, must be a day of the week. Capitalization does not matter but spelling does; prevents message from being sent on those days.
+
+  ex. ```dmb blockDays Tuesday Friday``` 
+
+**unblockDays** ------- takes strings, must be a day of the week. Capitalization does not matter but spelling does; removes those days from the list of blocked days..
+
+  ex. ```dmb blockDays Friday``` 
+
+**viewBlockedDays** ------- takes no arguments; returns the days messages will not be sent.
+
+  ex. ```dmb viewMessageTime``` 
