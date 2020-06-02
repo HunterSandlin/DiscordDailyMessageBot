@@ -90,3 +90,11 @@ You can use these commands to talk to the bot on it's server. All commands are p
   **viewTasks** ------- takes no arguments; sends all tasks and their corresponding weights.
 
   ex. ```dmb viewTasks``` 
+  
+  **addTask** ------- takes an integer (the weight of task) and a stirng in quotations; adds task in memory along under their weight.
+
+  ex. ```dmb addTask 5 "Read chapter of book"``` 
+  
+  **removeTask** ------- takes a stirng in quotations; removes that task from memory. Must be exact, it is reccomended to copy it from the viewTasks commad.
+
+  ex. ```dmb removeTask "Read chapter of book"``` 
