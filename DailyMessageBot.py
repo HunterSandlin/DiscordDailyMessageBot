@@ -16,7 +16,8 @@ client = commands.Bot(command_prefix='dmb ')
 #users that will receive messages
 users = []
 numTasks = 2
-
+hour = configFile['messageTime']['hour']
+minutes = configFile['messageTime']['minutes']
 
 #--------Handles Events---------
 @client.event
@@ -157,8 +158,33 @@ async def removeTask(ctx, removeTask):
     embed = discord.Embed(description = 'Error: task does not exists')
     await ctx.send(embed = embed)
 
-#TODO: update send time
+@client.command()
+async def setMessageTime(ctx, newTime):
+    if not ":" in newTime:
+        embed = discord.Embed(description = 'Error: time must be in hour:minutes and 24 hour format (ex. 20:35).')
+        await ctx.send(embed = embed)
+        return
+    newHour = int(newTime.split(':')[0])
+    newMinutes = int(newTime.split(':')[1])
+    if newHour > 23 or newHour < 0:
+        embed = discord.Embed(description = 'Error: invalid hour. Must be from 0 to 23')
+        await ctx.send(embed = embed)
+        return
+    if newMinutes > 59 or newMinutes < 0:
+        embed = discord.Embed(description = 'Error: invalid minutes. Must be from 0 to 59')
+        await ctx.send(embed = embed)
+        return
+    global hour, minutes
+    hour = newHour
+    minutes = newMinutes
+    embed = discord.Embed(description = ' -- Time set')
+    await ctx.send(embed = embed)
 
+
+@client.command()
+async def viewMessageTime(ctx):
+    embed = discord.Embed(description = 'Time set is ' + str(hour) + ":" + str(minutes))
+    await ctx.send(embed = embed)
 
 #---------General Functions---------
 #randomly selects 'numTasks' number of tasks from yaml file, weighted
@@ -210,9 +236,15 @@ async def custom_strftime(format, t):
 #loop for sending message
 @discordTasks.loop(minutes=1.0)
 async def messageDaily():
-    if (dt.now().hour == 14) and (dt.now().strftime('%M') == '49'):
+    if (dt.now().hour == hour) and (dt.now().strftime('%M') == str(minutes)):
         await dmTasks()
 
+
+#TODO: make time programmable
+# set hour and minute, it is fine if it updates too often for now
+#TODO: turn off on certain days
+#TODO: save to config file
+#TODO: better help function
 
 messageDaily.start()
 #run bot using token    
