@@ -18,7 +18,7 @@ users = []
 numTasks = 2
 hour = configFile['messageTime']['hour']
 minutes = configFile['messageTime']['minutes']
-
+blacklistedDays = [item.lower() for item in configFile['blacklistedDays']]
 #--------Handles Events---------
 @client.event
 async def on_ready():
@@ -128,10 +128,6 @@ async def addTask(ctx, weight, newTask):
         embed = discord.Embed(description = "Error: first value must be an integer (qutations are not allowed)")
         await ctx.send(embed = embed)
         return
-    if (type(newTask) != str):
-        embed = discord.Embed(description = 'Error: second value must be an string (ex. "Read book").')
-        await ctx.send(embed = embed)
-        return
     #see if the weight exists then add accordingly
     global tasks
     if int(weight) in tasks:
@@ -186,6 +182,77 @@ async def viewMessageTime(ctx):
     embed = discord.Embed(description = 'Time set is ' + str(hour) + ":" + str(minutes))
     await ctx.send(embed = embed)
 
+@client.command()
+async def blockDays(ctx, *days):
+    global blacklistedDays
+    days = list(days)
+    if len(days) < 1:
+        embed = discord.Embed(description = "Error: no days were provided")
+        await ctx.send(embed = embed)
+        return
+    possibleDays = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']
+    for day in days:
+        if not day.lower() in possibleDays:
+            embed = discord.Embed(description = "Error: " + str(day) + " is not a valid day. Nothing added.")
+            await ctx.send(embed = embed)
+            return
+        if day.lower() in blacklistedDays:
+            embed = discord.Embed(description = str(day) + " is already black listed. It will be ignored")
+            await ctx.send(embed = embed)
+            days.remove(day.lower())
+            
+    if len(days) < 1:
+        embed = discord.Embed(description = "Nothing else to do.")
+        await ctx.send(embed = embed)
+
+    for item in days:
+        blacklistedDays.append(item)
+    message = " -- Days added to blacklist" if len(days) > 1 else " -- Day added to blacklist."
+    embed = discord.Embed(description = message)
+    await ctx.send(embed = embed)
+
+@client.command()
+async def unblockDays(ctx, *days):
+    global blacklistedDays
+    days = list(days)
+    if len(days) < 1:
+        embed = discord.Embed(description = "Error: no days were provided")
+        await ctx.send(embed = embed)
+        return
+    possibleDays = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']
+    for day in days:
+        if not day.lower() in possibleDays:
+            embed = discord.Embed(description = "Error: " + str(day) + " is not a valid day. Nothing added.")
+            await ctx.send(embed = embed)
+            return
+        if not day.lower() in blacklistedDays:
+            embed = discord.Embed(description = str(day) + " is not black listed. It will be ignored")
+            await ctx.send(embed = embed)
+            days.remove(day.lower())
+            
+    if len(days) < 1:
+        embed = discord.Embed(description = "Nothing else to do.")
+        await ctx.send(embed = embed)
+
+    for item in days:
+        blacklistedDays.remove(item.lower())
+    message = " -- Days removed from blacklist" if len(days) > 1 else " -- Day removed from blacklist."
+    embed = discord.Embed(description = message)
+    await ctx.send(embed = embed)
+
+@client.command()
+async def viewBlockedDays(ctx):
+    global blacklistedDays
+    message = "Days blocked:"
+    i = len(blacklistedDays)
+    for day in blacklistedDays:
+        message += " " + day.capitalize()
+        message += "," if i > 1 else "."
+        i -= 1
+    embed = discord.Embed(description = message)
+    await ctx.send(embed = embed)
+
+
 #---------General Functions---------
 #randomly selects 'numTasks' number of tasks from yaml file, weighted
 async def getRandomTasks():
@@ -236,13 +303,12 @@ async def custom_strftime(format, t):
 #loop for sending message
 @discordTasks.loop(minutes=1.0)
 async def messageDaily():
+    global blacklistedDays
+    if dt.now().strftime('%A'). lower() in blacklistedDays:
+        return
     if (dt.now().hour == hour) and (dt.now().strftime('%M') == str(minutes)):
         await dmTasks()
 
-
-#TODO: make time programmable
-# set hour and minute, it is fine if it updates too often for now
-#TODO: turn off on certain days
 #TODO: save to config file
 #TODO: better help function
 
