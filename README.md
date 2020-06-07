@@ -7,7 +7,7 @@ The bot works by adding it to a Discord server you own (or making a new one just
 
 
 # Set up
-## Install python3
+## 1. Install python3
 This bot requies python 3.5.3 or newer. You can see if it is installed by opening a terminal or command prompt and typing 
 
 ``python --version`` 
@@ -18,10 +18,10 @@ if that does not work, try
 
 If neither of those work you will most likely have to [install python](https://www.python.org/downloads/). If your python is older than version 3.5.3 you will have to update python.
 
-## Install discord.py
+## 2. Install discord.py
 Before you can use this bot you have to install discord.py. This bot is writen in discord.py Rewrite so be sure you are not using an older version. For an up to day installation guide, reference the offical [discord.py documentation](https://discordpy.readthedocs.io/en/latest/intro.html).
 
-## Set up bot on Discord
+## 3. Set up bot on Discord
 1. To set up the bot on the server, go to https://discord.com/developers/applications
 There you will be asked to login to your Discord account. 
 
@@ -33,19 +33,23 @@ There you will be asked to login to your Discord account.
 
 5. Scroll back up to the top and click **Copy** under the **Token**. This will copy the bot's token to your clipboard, which you will use in the next step.
 
-## Set up Code
+It is also on this page where you can name the bot and give it a profile picture.
+
+## 4. Set up Code
 1. First [clone](https://help.github.com/en/github/creating-cloning-and-archiving-repositories/cloning-a-repository) this repository. 
 
 2. Rename `ex-config.yaml` to `config.yaml`
 
 3. On the second line of `config.yaml`, replace *YOUR_TOKEN_HERE* with your bot's token. It is important that you do not share this token with anyone or upload it online to ensure safety. 
 
+[*Steps 4 and 5 are optional as they can be done after bot is running*] 
+
 4. Further down in that file, you will see a **tasks** section with examples of messages the bot can send you. The numbers represent the likelyhood of those tasks being pulled. For exapmle, *Common (lvl4)-ONE* if 4x more likely to be picked than "Rare (1) Example." Add the tasks you would like here. 
      - You can update these in memory later. 
 
-5. TODO: Set time to message **not yet implemented** and number of messages **not yet implemented**
+5. Set the time in the same file under **messageTime**. It requires a 24-hour clock. If you wated 3:00pm, for example, you would set **hour** to *15* and **minutes** to *0*. Additionally, you can set it to not send messages on certain days by adding the day of the week in the **blacklistedDays** section. These days must be in quotations, seperated by commas, and spelled correctly, however capitalization is optional.
 
-## Run bot
+## 5. Run bot
 To run the bot, simply run the python script. You can do this this by navigating to the directory in a terminal or command prompt and typying:
 
 ```python3 DailyMessageBot.py```
@@ -57,64 +61,69 @@ You can use these commands to talk to the bot on it's server. All commands are p
 
   **addUser** --------- takes list of users mentioned with an @; adds users to list of who to send daily messages.
 
-  ex. ```dmb addUser @johnsmith @janedoe``` 
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ex. ```dmb addUser @johnsmith @janedoe``` 
 
   **echo** ------------ takes a string; sends string back to you.
 
-  ex. ```dmb Hello World```
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ex. ```dmb Hello World```
 
   **getUsers**  ------- takes no arguments; responds with list of all users added.
 
-  ex. ```dmb getUsers```
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ex. ```dmb getUsers```
 
   **help**   ---------- takes no arguments; responds with list of all commands.
 
-  ex. ```dmb help```
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ex. ```dmb help```
 
   **ping** ------------ takes no arguments; responds with "pong".
 
-  ex. ```dmb ping```
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ex. ```dmb ping```
 
   **removeUser**   ---- takes list of users mentioned with an @; removes users from list of who to send daily messages.
 
-  ex. ```dmb removeUser @johnsmith @janedoe```  
+<br />
+
+
+  ## Manage Tasks
+
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ex. ```dmb removeUser @johnsmith @janedoe```  
 
   **setNumTasks** ----- takes one integer; sets number of tasks that will be sent each day.
 
-  ex. ```dmb setNumTasks 3```
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ex. ```dmb setNumTasks 3```
 
   **testTasks** ------- takes no arguments; messages users with random tasks.
 
-  ex. ```dmb testTasks```
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ex. ```dmb testTasks```
 
   **viewTasks** ------- takes no arguments; sends all tasks and their corresponding weights.
 
-  ex. ```dmb viewTasks``` 
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ex. ```dmb viewTasks``` 
   
   **addTask** ------- takes an integer (the weight of task) and a string in quotes; adds task in memory along under their weight.
 
-  ex. ```dmb addTask 5 "Read chapter of book"``` 
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ex. ```dmb addTask 5 "Read chapter of book"``` 
   
   **removeTask** ------- takes a stirng in quotes; removes that task from memory. Must be exact, it is reccomended to copy it from the viewTasks commad.
 
-  ex. ```dmb removeTask "Read chapter of book"``` 
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ex. ```dmb removeTask "Read chapter of book"``` 
 
   **setMessageTime** ------- takes a time in 24 hour format; sets that time to be when messages will be sent each day.
 
-  ex. ```dmb setMessageTime 23:15``` 
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ex. ```dmb setMessageTime 23:15``` 
 
-   **viewMessageTime** ------- takes no arguments; returns time that messages will be set each day.
+  **viewMessageTime** ------- takes no arguments; returns time that messages will be set each day.
 
-  ex. ```dmb viewMessageTime``` 
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ex. ```dmb viewMessageTime``` 
 
-**blockDays** ------- takes strings, must be a day of the week. Capitalization does not matter but spelling does; prevents message from being sent on those days.
+  **blockDays** ------- takes strings, must be a day of the week. Capitalization does not matter but spelling does; prevents message from being sent on those days.
 
-  ex. ```dmb blockDays Tuesday Friday``` 
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ex. ```dmb blockDays Tuesday Friday``` 
 
-**unblockDays** ------- takes strings, must be a day of the week. Capitalization does not matter but spelling does; removes those days from the list of blocked days..
+  **unblockDays** ------- takes strings, must be a day of the week. Capitalization does not matter but spelling does; removes those days from the list of blocked days..
 
-  ex. ```dmb blockDays Friday``` 
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ex. ```dmb blockDays Friday``` 
 
-**viewBlockedDays** ------- takes no arguments; returns the days messages will not be sent.
+  **viewBlockedDays** ------- takes no arguments; returns the days messages will not be sent.
 
-  ex. ```dmb viewMessageTime``` 
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ex. ```dmb viewMessageTime``` 
