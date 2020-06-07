@@ -81,11 +81,6 @@ You can use these commands to talk to the bot on it's server. All commands are p
 
   **removeUser**   ---- takes list of users mentioned with an @; removes users from list of who to send daily messages.
 
-<br />
-
-
-  ## Manage Tasks
-
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ex. ```dmb removeUser @johnsmith @janedoe```  
 
   **setNumTasks** ----- takes one integer; sets number of tasks that will be sent each day.
